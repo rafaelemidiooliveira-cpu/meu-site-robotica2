@@ -30,3 +30,4 @@ Depois, habilite o cadastro público para que os estudantes criem suas próprias
 Estudantes podem enviar projetos e propor edição dos próprios projetos publicados. As propostas ficam privadas até a aprovação do administrador; apenas os projetos aprovados aparecem na galeria pública. O perfil administrativo é atribuído pelo SQL Editor e não pode ser escolhido no formulário.
 
 O GitHub Pages não fornece banco de dados nem autenticação no servidor. O Supabase é necessário para que login, conteúdo compartilhado e aprovação funcionem com segurança.
+testando coração
