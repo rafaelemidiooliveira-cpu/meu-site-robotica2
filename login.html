@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Acesso de estudantes e professor ao painel de projetos de robótica.">
+  <title>Acesso | Robótica na Escola</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Voltar ao início"><span class="brand-mark" aria-hidden="true">R<span>+</span></span><span>ROBÓTICA<br>NA ESCOLA</span></a>
+    <nav class="main-nav" aria-label="Navegação principal"><a href="index.html">Início</a><a href="projetos.html">Escolas</a><a href="sobre.html">Sobre</a></nav>
+    <a class="header-access" href="index.html">Voltar ao site <span aria-hidden="true">↗</span></a>
+  </header>
+  <main class="portal-main">
+    <section class="portal-heading"><p class="eyebrow"><span class="live-dot"></span> ÁREA DE ESTUDANTES E PROFESSOR</p><h1>Projetos em<br><em>boas mãos.</em></h1><p>Entre para enviar projetos ou revisar propostas. Todo conteúdo enviado por estudantes precisa de aprovação antes de aparecer nas páginas públicas.</p></section>
+    <section class="portal-panel" aria-label="Painel de acesso">
+      <div id="connection-notice" class="connection-notice" role="status">Verificando conexão segura…</div>
+      <form id="login-form" class="login-form">
+        <p class="eyebrow">ACESSO AO PAINEL</p>
+        <label for="login-email">E-mail</label><input id="login-email" name="email" type="email" autocomplete="username" required>
+        <label for="login-password">Senha</label><input id="login-password" name="password" type="password" autocomplete="current-password" required>
+        <button class="button button-dark" type="submit">Entrar <span aria-hidden="true">↗</span></button>
+        <p class="form-help">As contas são disponibilizadas pelo administrador do projeto.</p>
+      </form>
+      <form id="signup-form" class="login-form signup-form">
+        <p class="eyebrow">CRIAR CONTA</p>
+        <label for="signup-email">E-mail</label><input id="signup-email" name="email" type="email" autocomplete="email" required>
+        <p id="signup-role-notice" class="form-help" role="status">Use um e-mail para ver o tipo de acesso que será solicitado.</p>
+        <label for="signup-password">Criar senha</label><input id="signup-password" name="password" type="password" autocomplete="new-password" minlength="12" required>
+        <button class="button button-outline" type="submit">Cadastrar <span aria-hidden="true">↗</span></button>
+        <p class="form-help">A conta precisa confirmar o e-mail antes de entrar. O perfil é atribuído pelo sistema.</p>
+      </form>
+      <section id="workspace" class="workspace" hidden>
+        <div class="workspace-top"><div><p class="eyebrow">SESSÃO ATIVA</p><h2 id="account-label">Painel</h2></div><button id="logout-button" class="button button-outline" type="button">Sair</button></div>
+        <p id="workspace-message" class="workspace-message" role="status"></p>
+        <p id="visitor-message" class="workspace-message" hidden>Seu acesso de visitante permite visualizar o site. Apenas contas com e-mail institucional @escola.pr.gov.br podem enviar projetos para aprovação.</p>
+        <form id="proposal-form" class="proposal-form">
+          <p class="eyebrow" id="editor-eyebrow">NOVO PROJETO</p>
+          <input id="proposal-id" type="hidden"><input id="target-project-id" type="hidden">
+          <label for="project-school">Escola</label><select id="project-school" required><option value="bella-vista">Escola Estadual do Bella Vista</option><option value="ceep">CEEP Ozório Gonçalves Nogueira</option></select>
+          <label for="project-title">Título do projeto</label><input id="project-title" maxlength="120" required>
+          <label for="project-summary">Resumo</label><input id="project-summary" maxlength="220" required>
+          <label for="project-body">Como funciona / descrição</label><textarea id="project-body" rows="5" maxlength="5000" required></textarea>
+          <label for="project-image">Link de imagem (opcional)</label><input id="project-image" type="url" placeholder="https://…">
+          <button class="button button-dark" type="submit">Enviar para revisão <span aria-hidden="true">↗</span></button>
+        </form>
+        <section id="my-projects" class="dashboard-section" hidden><h3>Meus projetos publicados</h3><div id="my-project-list"></div></section>
+        <section id="my-proposals" class="dashboard-section" hidden><h3>Minhas propostas</h3><div id="my-proposal-list"></div></section>
+        <section id="review-section" class="dashboard-section" hidden><h3>Propostas aguardando revisão</h3><div id="review-list"></div></section>
+      </section>
+    </section>
+  </main>
+  <footer class="site-footer"><a class="brand footer-brand" href="index.html"><span class="brand-mark" aria-hidden="true">R<span>+</span></span><span>ROBÓTICA<br>NA ESCOLA</span></a><span>CONTEÚDO DE ESTUDANTES PUBLICADO APÓS APROVAÇÃO</span><span>BANDEIRANTES · PARANÁ</span></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/panel.js"></script>
+</body>
+</html>
