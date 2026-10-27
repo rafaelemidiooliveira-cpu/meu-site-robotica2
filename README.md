@@ -29,5 +29,7 @@ Depois, habilite o cadastro público para que os estudantes criem suas próprias
 
 Estudantes podem enviar projetos e propor edição dos próprios projetos publicados. As propostas ficam privadas até a aprovação do administrador; apenas os projetos aprovados aparecem na galeria pública. O perfil administrativo é atribuído pelo SQL Editor e não pode ser escolhido no formulário.
 
+As fotos dos projetos são enviadas diretamente ao Supabase Storage pelo formulário (JPG, PNG ou WebP, até 5 MB). O bucket público `project-images` e as políticas de upload são criados pelo script `database/supabase.sql`. Se o Supabase já estiver configurado, execute novamente esse script no SQL Editor para criar o bucket e habilitar os uploads.
+
 O GitHub Pages não fornece banco de dados nem autenticação no servidor. O Supabase é necessário para que login, conteúdo compartilhado e aprovação funcionem com segurança.
 testando coração

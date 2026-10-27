@@ -46,7 +46,9 @@
           <label for="project-title">Título do projeto</label><input id="project-title" maxlength="120" required>
           <label for="project-summary">Resumo</label><input id="project-summary" maxlength="220" required>
           <label for="project-body">Como funciona / descrição</label><textarea id="project-body" rows="5" maxlength="5000" required></textarea>
-          <label for="project-image">Link de imagem (opcional)</label><input id="project-image" type="url" placeholder="https://…">
+          <label for="project-image">Foto do projeto (opcional)</label><input id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help">
+          <input id="project-image-url" type="hidden">
+          <p id="project-image-help" class="form-help">Envie JPG, PNG ou WebP de até 5 MB. Em edições, deixe vazio para manter a foto atual.</p>
           <button class="button button-dark" type="submit">Enviar para revisão <span aria-hidden="true">↗</span></button>
         </form>
         <section id="my-projects" class="dashboard-section" hidden><h3>Meus projetos publicados</h3><div id="my-project-list"></div></section>
