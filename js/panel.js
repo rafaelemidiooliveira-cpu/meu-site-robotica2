@@ -8,6 +8,15 @@
   const workspace = document.querySelector("#workspace");
   const proposalForm = document.querySelector("#proposal-form");
   const workspaceMessage = document.querySelector("#workspace-message");
+  const projectImageInput = document.querySelector("#project-image");
+  const projectImageUrl = document.querySelector("#project-image-url");
+  const projectImageBucket = "project-images";
+  const maxProjectImageSize = 5 * 1024 * 1024;
+  const imageExtensions = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp"
+  };
 
   if (!config?.supabaseUrl || !config?.supabaseAnonKey || !supabaseApi) {
     notice.textContent = "O acesso ainda não foi conectado ao banco de dados. Configure o Supabase seguindo as instruções do projeto.";
@@ -32,7 +41,28 @@
     proposalForm.reset();
     setField("proposal-id", "");
     setField("target-project-id", "");
+    setField("project-image-url", "");
     document.querySelector("#editor-eyebrow").textContent = "NOVO PROJETO";
+  }
+
+  async function uploadProjectImage(file) {
+    if (!imageExtensions[file.type]) {
+      throw new Error("Escolha uma imagem JPG, PNG ou WebP.");
+    }
+    if (file.size > maxProjectImageSize) {
+      throw new Error("A imagem precisa ter no máximo 5 MB.");
+    }
+
+    const path = `${currentUser.id}/${crypto.randomUUID()}.${imageExtensions[file.type]}`;
+    const { error } = await client.storage
+      .from(projectImageBucket)
+      .upload(path, file, { cacheControl: "3600", contentType: file.type, upsert: false });
+    if (error) throw error;
+
+    return {
+      path,
+      url: client.storage.from(projectImageBucket).getPublicUrl(path).data.publicUrl
+    };
   }
 
   async function loadWorkspace() {
@@ -77,12 +107,13 @@
       button.type = "button";
       button.textContent = "Propor edição";
       button.addEventListener("click", () => {
+        projectImageInput.value = "";
         setField("target-project-id", project.id);
         setField("project-school", project.school_id);
         setField("project-title", project.title);
         setField("project-summary", project.summary);
         setField("project-body", project.body);
-        setField("project-image", project.image_url);
+        setField("project-image-url", project.image_url);
         document.querySelector("#editor-eyebrow").textContent = "EDIÇÃO PARA APROVAÇÃO";
         proposalForm.scrollIntoView({ behavior: "smooth", block: "start" });
       });
@@ -110,13 +141,14 @@
         button.type = "button";
         button.textContent = "Editar proposta";
         button.addEventListener("click", () => {
+          projectImageInput.value = "";
           setField("proposal-id", proposal.id);
           setField("target-project-id", proposal.target_project_id);
           setField("project-school", proposal.school_id);
           setField("project-title", proposal.title);
           setField("project-summary", proposal.summary);
           setField("project-body", proposal.body);
-          setField("project-image", proposal.image_url);
+          setField("project-image-url", proposal.image_url);
           document.querySelector("#editor-eyebrow").textContent = "EDITAR PROPOSTA PENDENTE";
           proposalForm.scrollIntoView({ behavior: "smooth", block: "start" });
         });
@@ -223,17 +255,27 @@
   proposalForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const proposalId = document.querySelector("#proposal-id").value;
+    const selectedImage = projectImageInput.files[0];
     const project = {
       school_id: document.querySelector("#project-school").value,
       title: document.querySelector("#project-title").value.trim(),
       summary: document.querySelector("#project-summary").value.trim(),
       body: document.querySelector("#project-body").value.trim(),
-      image_url: document.querySelector("#project-image").value.trim() || null
+      image_url: projectImageUrl.value || null
     };
-    if (project.image_url && !project.image_url.startsWith("https://")) {
-      setMessage("O link da imagem precisa começar com https://.", true);
-      return;
+
+    let uploadedImagePath;
+    if (selectedImage) {
+      try {
+        const uploadedImage = await uploadProjectImage(selectedImage);
+        uploadedImagePath = uploadedImage.path;
+        project.image_url = uploadedImage.url;
+      } catch (error) {
+        setMessage(`Não foi possível enviar a foto: ${error.message}`, true);
+        return;
+      }
     }
+
     let error;
     if (currentRole === "admin") {
       ({ error } = await client.from("projects").insert({ ...project, author_id: currentUser.id }));
@@ -247,7 +289,12 @@
       if (!error) setMessage("Enviado para revisão. O projeto só será publicado após aprovação.");
     }
     if (error) {
-      setMessage(error.message, true);
+      let cleanupMessage = "";
+      if (uploadedImagePath) {
+        const { error: cleanupError } = await client.storage.from(projectImageBucket).remove([uploadedImagePath]);
+        if (cleanupError) cleanupMessage = " A foto enviada não pôde ser removida do armazenamento.";
+      }
+      setMessage(`${error.message}${cleanupMessage}`, true);
       return;
     }
     clearEditor();
