@@ -17,6 +17,7 @@ a { color: inherit; text-decoration: none; }
 .brand { display: inline-flex; align-items: center; gap: 11px; font-size: 10px; font-weight: 800; line-height: 1.12; }
 .brand-mark { width: 37px; height: 37px; display: grid; place-items: center; position: relative; background: var(--green); font-size: 17px; font-weight: 800; }
 .brand-mark span { position: absolute; right: 4px; top: 3px; color: var(--orange); font-size: 10px; }
+.nav-toggle { display: none; }
 .main-nav { display: flex; align-items: center; gap: 38px; height: 100%; }
 .main-nav a { height: 100%; display: inline-flex; align-items: center; position: relative; color: var(--muted); font-size: 12px; font-weight: 600; }
 .main-nav a:hover, .main-nav a.active { color: var(--ink); }
@@ -180,11 +181,16 @@ h1 em, h2 em { color: #758f38; font-style: normal; }
 .review-actions .button:disabled { opacity: .5; cursor: wait; }
 [hidden] { display: none !important; }
 @media (max-width: 760px) {
-  .site-header { height: 72px; padding: 0 5%; }
+  .site-header { height: 72px; padding: 0 5%; position: relative; }
   .brand { gap: 8px; font-size: 9px; }
   .brand-mark { width: 33px; height: 33px; }
-  .main-nav { gap: 17px; }
-  .main-nav a { font-size: 11px; }
+  .nav-toggle { width: 40px; height: 40px; padding: 10px; display: flex; flex-direction: column; justify-content: center; gap: 5px; border: 1px solid var(--line); background: transparent; cursor: pointer; }
+  .nav-toggle > span:not(.sr-only) { width: 18px; height: 2px; background: var(--ink); }
+  .nav-toggle .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+  .main-nav { position: absolute; z-index: 5; top: 100%; right: 0; left: 0; height: auto; padding: 12px 5%; display: none; flex-direction: column; align-items: stretch; gap: 0; border-bottom: 1px solid var(--line); background: var(--paper); }
+  .main-nav.is-open { display: flex; }
+  .main-nav a { min-height: 44px; font-size: 12px; }
+  .main-nav a.active::after { right: auto; width: 28px; }
   .header-place { display: none; }
   .header-access { padding: 7px 8px; font-size: 10px; }
   .hero { min-height: auto; padding: 62px 7% 48px; grid-template-columns: 1fr; gap: 38px; }
