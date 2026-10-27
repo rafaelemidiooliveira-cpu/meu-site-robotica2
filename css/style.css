@@ -38,9 +38,12 @@ h1 em, h2 em { color: #758f38; font-style: normal; }
 .button span, .text-link span { font-size: 17px; }
 .hero-note { margin-top: 54px; display: flex; align-items: center; gap: 10px; color: var(--muted); }
 .note-line { width: 25px; height: 1px; background: var(--orange); }
-.hero-visual { min-height: 400px; position: relative; background: #42514b url("https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1100&q=85") center 42% / cover; }
-.hero-visual::after { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(24,34,30,.24), transparent 40%, rgba(24,34,30,.65)); content: ""; }
-.visual-label, .visual-caption { position: absolute; z-index: 1; right: 19px; left: 19px; display: flex; justify-content: space-between; color: white; }
+.hero-visual { min-height: 400px; position: relative; background: #24362c; }
+.hero-visual::after { position: absolute; z-index: 0; inset: 0; background: linear-gradient(180deg, rgba(24,34,30,.24), transparent 40%, rgba(24,34,30,.65)); content: ""; }
+.robot-stage { position: absolute; z-index: 1; inset: 48px 20px 50px; display: grid; place-items: center; overflow: hidden; }
+.grid-lines { position: absolute; inset: 0; background-image: linear-gradient(rgba(242,240,233,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(242,240,233,.08) 1px, transparent 1px); background-size: 32px 32px; }
+.robot-svg { position: relative; z-index: 1; display: block; width: min(100%, 280px); height: 100%; max-height: 320px; }
+.visual-label, .visual-caption { position: absolute; z-index: 2; right: 19px; left: 19px; display: flex; justify-content: space-between; color: white; }
 .visual-label { top: 18px; }
 .visual-caption { bottom: 19px; align-items: end; line-height: 1.65; }
 .caption-arrow { width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.7); border-radius: 50%; font-size: 16px; }
