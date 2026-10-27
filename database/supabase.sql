@@ -238,6 +238,32 @@ grant execute on function public.is_project_student() to authenticated;
 revoke all on function public.review_project_proposal(uuid, boolean) from public;
 grant execute on function public.review_project_proposal(uuid, boolean) to authenticated;
 
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('project-images', 'project-images', true, 5242880, array['image/jpeg', 'image/png', 'image/webp'])
+on conflict (id) do update
+set name = excluded.name,
+    public = excluded.public,
+    file_size_limit = excluded.file_size_limit,
+    allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "Students and admins upload project images" on storage.objects;
+create policy "Students and admins upload project images"
+  on storage.objects for insert to authenticated
+  with check (
+    bucket_id = 'project-images'
+    and (storage.foldername(name))[1] = (select auth.uid())::text
+    and ((select public.is_project_student()) or (select public.is_project_admin()))
+  );
+
+drop policy if exists "Owners and admins delete project images" on storage.objects;
+create policy "Owners and admins delete project images"
+  on storage.objects for delete to authenticated
+  using (
+    bucket_id = 'project-images'
+    and (storage.foldername(name))[1] = (select auth.uid())::text
+    and ((select public.is_project_student()) or (select public.is_project_admin()))
+  );
+
 update public.profiles
 set role = 'admin'
 where lower(email) = 'rafael.emidio.oliveira@escola.pr.gov.br';
