@@ -7,43 +7,63 @@
   const galleries = document.querySelectorAll("[data-school-gallery]");
 
   function addProject(gallery, project) {
+    // Cria o container principal do card
     const card = document.createElement("article");
-    card.className = "published-project";
-    
+    card.className = "published-project smart-card";
+
+    // Cria a div lateral da imagem
     if (project.image_url && project.image_url.startsWith("https://")) {
+      const imageWrapper = document.createElement("div");
+      imageWrapper.className = "smart-card-image";
+      
       const image = document.createElement("img");
       image.src = project.image_url;
       image.alt = "Imagem do projeto " + project.title;
       image.loading = "lazy";
-      card.append(image);
+      
+      imageWrapper.append(image);
+      card.append(imageWrapper);
     }
-    
+
+    // Cria a div lateral do conteúdo (textos)
+    const contentWrapper = document.createElement("div");
+    contentWrapper.className = "smart-card-content";
+
     const title = document.createElement("h3");
     title.textContent = project.title;
+    
     const summary = document.createElement("p");
     summary.className = "published-summary";
+    // Deixa o resumo em negrito ou destacado
+    summary.style.fontWeight = "600"; 
+    summary.style.marginBottom = "1rem";
     summary.textContent = project.summary;
+    
     const body = document.createElement("p");
-    body.textContent = project.body;
-    card.append(title, summary, body);
+    // Como o texto é longo, o CSS vai cuidar dos parágrafos
+    body.innerHTML = project.body.replace(/\n/g, '<br>'); 
+    
+    contentWrapper.append(title, summary, body);
 
-    // Adiciona o botão para acessar o código se o link existir
+    // Adiciona o botão de código se existir
     if (project.code_url) {
       const codeLink = document.createElement("a");
       codeLink.href = project.code_url;
       codeLink.target = "_blank";
       codeLink.rel = "noopener noreferrer";
-      codeLink.className = "text-link";
+      codeLink.className = "button button-dark";
       codeLink.style.display = "inline-block";
-      codeLink.style.marginTop = "1rem";
+      codeLink.style.marginTop = "1.5rem";
       codeLink.innerHTML = 'Acessar código <span aria-hidden="true">↗</span>';
-      card.append(codeLink);
+      contentWrapper.append(codeLink);
     }
 
+    card.append(contentWrapper);
     gallery.append(card);
   }
 
   galleries.forEach(async (gallery) => {
+    // Limpa a mensagem de "Os projetos aparecerão aqui" se houver projetos
     const { data, error } = await client
       .from("projects")
       .select("id, title, summary, body, image_url, code_url") 
