@@ -8,15 +8,6 @@
   const workspace = document.querySelector("#workspace");
   const proposalForm = document.querySelector("#proposal-form");
   const workspaceMessage = document.querySelector("#workspace-message");
-  const projectImageInput = document.querySelector("#project-image");
-  const projectImageUrl = document.querySelector("#project-image-url");
-  const projectImageBucket = "project-images";
-  const maxProjectImageSize = 5 * 1024 * 1024;
-  const imageExtensions = {
-    "image/jpeg": "jpg",
-    "image/png": "png",
-    "image/webp": "webp"
-  };
 
   if (!config?.supabaseUrl || !config?.supabaseAnonKey || !supabaseApi) {
     notice.textContent = "O acesso ainda não foi conectado ao banco de dados. Configure o Supabase seguindo as instruções do projeto.";
@@ -43,6 +34,7 @@
     setField("target-project-id", "");
     setField("published-project-id", "");
     setField("project-image-url", "");
+    setField("project-code-url", "");
     document.querySelector("#editor-eyebrow").textContent = "NOVO PROJETO";
     document.querySelector("#cancel-edit-button").hidden = true;
     if (currentRole && currentRole !== "visitor") {
@@ -51,7 +43,6 @@
   }
 
   function fillEditor(fields) {
-    projectImageInput.value = "";
     setField("proposal-id", fields.proposalId || "");
     setField("target-project-id", fields.targetProjectId || "");
     setField("published-project-id", fields.publishedProjectId || "");
@@ -60,32 +51,13 @@
     setField("project-summary", fields.summary);
     setField("project-body", fields.body);
     setField("project-image-url", fields.imageUrl);
+    setField("project-code-url", fields.codeUrl);
     document.querySelector("#editor-eyebrow").textContent = fields.eyebrow;
     document.querySelector("#cancel-edit-button").hidden = !fields.showCancel;
     if (fields.submitLabel) {
       proposalForm.querySelector("button[type=submit]").textContent = fields.submitLabel;
     }
     proposalForm.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  async function uploadProjectImage(file) {
-    if (!imageExtensions[file.type]) {
-      throw new Error("Escolha uma imagem JPG, PNG ou WebP.");
-    }
-    if (file.size > maxProjectImageSize) {
-      throw new Error("A imagem precisa ter no máximo 5 MB.");
-    }
-
-    const path = `${currentUser.id}/${crypto.randomUUID()}.${imageExtensions[file.type]}`;
-    const { error } = await client.storage
-      .from(projectImageBucket)
-      .upload(path, file, { cacheControl: "3600", contentType: file.type, upsert: false });
-    if (error) throw error;
-
-    return {
-      path,
-      url: client.storage.from(projectImageBucket).getPublicUrl(path).data.publicUrl
-    };
   }
 
   async function loadWorkspace() {
@@ -143,6 +115,7 @@
           summary: project.summary,
           body: project.body,
           imageUrl: project.image_url,
+          codeUrl: project.code_url,
           eyebrow: "EDIÇÃO PARA APROVAÇÃO",
           showCancel: true,
           submitLabel: "Enviar para revisão ↗"
@@ -180,6 +153,7 @@
             summary: proposal.summary,
             body: proposal.body,
             imageUrl: proposal.image_url,
+            codeUrl: proposal.code_url,
             eyebrow: "EDITAR PROPOSTA PENDENTE",
             showCancel: true,
             submitLabel: "Enviar para revisão ↗"
@@ -228,6 +202,7 @@
           summary: project.summary,
           body: project.body,
           imageUrl: project.image_url,
+          codeUrl: project.code_url,
           eyebrow: "EDITAR PROJETO PUBLICADO",
           showCancel: true,
           submitLabel: "Salvar alterações ↗"
@@ -280,6 +255,25 @@
       summary.textContent = proposal.summary;
       const body = document.createElement("p");
       body.textContent = proposal.body;
+      
+      const links = document.createElement("div");
+      links.style.marginBottom = "10px";
+      if (proposal.image_url) {
+        const imgLink = document.createElement("a");
+        imgLink.href = proposal.image_url;
+        imgLink.target = "_blank";
+        imgLink.textContent = "🖼️ Ver Imagem";
+        imgLink.style.marginRight = "15px";
+        links.append(imgLink);
+      }
+      if (proposal.code_url) {
+        const codeLink = document.createElement("a");
+        codeLink.href = proposal.code_url;
+        codeLink.target = "_blank";
+        codeLink.textContent = "💻 Ver Código";
+        links.append(codeLink);
+      }
+
       const actions = document.createElement("div");
       actions.className = "review-actions";
       [[true, "Aprovar"], [false, "Recusar"]].forEach(([approve, label]) => {
@@ -300,7 +294,7 @@
         });
         actions.append(button);
       });
-      item.append(title, school, summary, body, actions);
+      item.append(title, school, summary, body, links, actions);
       list.append(item);
     });
   }
@@ -353,26 +347,15 @@
   proposalForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const proposalId = document.querySelector("#proposal-id").value;
-    const selectedImage = projectImageInput.files[0];
+    
     const project = {
       school_id: document.querySelector("#project-school").value,
       title: document.querySelector("#project-title").value.trim(),
       summary: document.querySelector("#project-summary").value.trim(),
       body: document.querySelector("#project-body").value.trim(),
-      image_url: projectImageUrl.value || null
+      image_url: document.querySelector("#project-image-url").value.trim() || null,
+      code_url: document.querySelector("#project-code-url").value.trim() || null
     };
-
-    let uploadedImagePath;
-    if (selectedImage) {
-      try {
-        const uploadedImage = await uploadProjectImage(selectedImage);
-        uploadedImagePath = uploadedImage.path;
-        project.image_url = uploadedImage.url;
-      } catch (error) {
-        setMessage(`Não foi possível enviar a foto: ${error.message}`, true);
-        return;
-      }
-    }
 
     let error;
     const publishedProjectId = document.querySelector("#published-project-id").value;
@@ -390,13 +373,9 @@
       ({ error } = await client.from("project_proposals").insert({ ...project, author_id: currentUser.id, target_project_id: targetProjectId }));
       if (!error) setMessage("Enviado para revisão. O projeto só será publicado após aprovação.");
     }
+    
     if (error) {
-      let cleanupMessage = "";
-      if (uploadedImagePath) {
-        const { error: cleanupError } = await client.storage.from(projectImageBucket).remove([uploadedImagePath]);
-        if (cleanupError) cleanupMessage = " A foto enviada não pôde ser removida do armazenamento.";
-      }
-      setMessage(`${error.message}${cleanupMessage}`, true);
+      setMessage(error.message, true);
       return;
     }
     clearEditor();
