@@ -42,13 +42,21 @@
         <form id="proposal-form" class="proposal-form">
           <p class="eyebrow" id="editor-eyebrow">NOVO PROJETO</p>
           <input id="proposal-id" type="hidden"><input id="target-project-id" type="hidden"><input id="published-project-id" type="hidden">
+          
           <label for="project-school">Escola</label><select id="project-school" required><option value="bella-vista">Escola Estadual do Bella Vista</option><option value="ceep">CEEP Ozório Gonçalves Nogueira</option></select>
           <label for="project-title">Título do projeto</label><input id="project-title" maxlength="120" required>
           <label for="project-summary">Resumo</label><input id="project-summary" maxlength="220" required>
           <label for="project-body">Explicação do projeto</label><textarea id="project-body" rows="5" maxlength="5000" required placeholder="Descreva o que o projeto faz, como foi feito e o que os estudantes aprenderam."></textarea>
-          <label for="project-image">Foto do projeto (opcional)</label><input id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help">
-          <input id="project-image-url" type="hidden">
-          <p id="project-image-help" class="form-help">O arquivo vai direto ao armazenamento do site (JPG, PNG ou WebP, até 5 MB). Em edições, deixe vazio para manter a foto atual.</p>
+          
+          <!-- Novos campos de URL -->
+          <label for="project-image-url">Link da foto do projeto (opcional)</label>
+          <input id="project-image-url" name="image_url" type="url" placeholder="Ex: https://seu-projeto.supabase.co/storage/v1/object/public/...">
+          <p class="form-help">Cole a URL pública da imagem (JPG, PNG ou WebP) que você subiu no Supabase.</p>
+
+          <label for="project-code-url">Link do arquivo de programação (opcional)</label>
+          <input id="project-code-url" name="code_url" type="url" placeholder="Ex: https://drive.google.com/... ou https://github.com/...">
+          <p class="form-help">Cole o link do código (Google Drive, GitHub, Supabase, etc).</p>
+          
           <div class="form-actions">
             <button class="button button-dark" type="submit">Enviar para revisão <span aria-hidden="true">↗</span></button>
             <button id="cancel-edit-button" class="button button-outline" type="button" hidden>Cancelar edição</button>
