@@ -14,10 +14,13 @@
   --mono: "DM Mono", monospace;
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  background: #ffffff;
+}
 body {
   margin: 0;
-  background: var(--paper);
+  background: #ffffff;
   color: var(--ink);
   font-family: var(--display);
   -webkit-font-smoothing: antialiased;
