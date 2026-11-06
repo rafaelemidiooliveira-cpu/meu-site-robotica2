@@ -398,63 +398,88 @@ h1 em, h2 em {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
 /* =========================================
-   ESTILOS PARA OS CARDS DE PROJETOS (LADO A LADO)
+   LAYOUT DEFINITIVO DOS PROJETOS (CORRIGIDO)
    ========================================= */
 
+.project-gallery {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2rem !important;
+  width: 100% !important;
+  margin-top: 2rem;
+}
+
 .smart-card {
-  display: flex;
-  flex-direction: row; /* Coloca um ao lado do outro */
-  background: #ffffff;
-  border-radius: 12px;
-  overflow: hidden;
-  margin-bottom: 3rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-  border: 1px solid rgba(0,0,0,0.05);
+  display: flex !important;
+  flex-direction: row !important;
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+  width: 100% !important;
+  min-height: 500px; /* Aumentei um pouco para valorizar a foto */
 }
 
 .smart-card-image {
-  flex: 1; /* Ocupa metade do espaço */
-  min-height: 400px;
-  background-color: #f4f4f4;
+  flex: 1 !important;
+  width: 50% !important;
+  background-color: #f4f4f4 !important; /* Fundo cinza caso a foto não preencha tudo */
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .smart-card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* A imagem preenche o espaço sem achatar */
-  display: block;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important; /* A MÁGICA ACONTECE AQUI: Mostra a imagem inteira sem cortar */
+  padding: 1.5rem !important; /* Dá um pequeno respiro nas bordas */
+  display: block !important;
+  margin: 0 !important;
+  z-index: 1 !important;
 }
 
 .smart-card-content {
-  flex: 1.2; /* O texto ocupa um pouco mais de espaço */
-  padding: 3rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex: 1 !important;
+  width: 50% !important;
+  padding: 3.5rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
 }
 
 .smart-card-content h3 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  color: #111;
+  font-size: 2.2rem !important;
+  margin-top: 0 !important;
+  margin-bottom: 1rem !important;
+  color: #111 !important;
+  line-height: 1.2 !important;
 }
 
 .smart-card-content p {
-  font-size: 1.05rem;
-  line-height: 1.6;
-  color: #444;
-  margin-bottom: 1rem;
+  font-size: 1.1rem !important;
+  line-height: 1.7 !important;
+  color: #444 !important;
+  margin-bottom: 1rem !important;
 }
 
-/* No celular, coloca um embaixo do outro para não quebrar a tela */
+/* Responsivo: No celular vira coluna */
 @media (max-width: 850px) {
   .smart-card {
-    flex-direction: column;
+    flex-direction: column !important;
+    min-height: auto;
   }
   .smart-card-image {
-    min-height: 250px;
+    width: 100% !important;
+    height: 350px !important;
   }
   .smart-card-content {
-    padding: 1.5rem;
+    width: 100% !important;
+    padding: 2rem !important;
   }
 }
