@@ -294,6 +294,9 @@ h1 em, h2 em {
 }
 .proposal-form textarea { resize: vertical; line-height: 1.6; }
 .login-form .button, .proposal-form .button { justify-self: start; margin-top: 10px; border: 0; cursor: pointer; }
+.form-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.dashboard-actions { display: flex; gap: 12px; flex: 0 0 auto; }
+.text-button-danger { color: #ff8a70; }
 .login-form .button-outline { border: 1px solid var(--line); background: transparent; color: var(--ink); }
 .form-help { margin: 8px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
 .workspace-top { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; gap: 15px; }

@@ -256,12 +256,21 @@ create policy "Students and admins upload project images"
   );
 
 drop policy if exists "Owners and admins delete project images" on storage.objects;
-create policy "Owners and admins delete project images"
+drop policy if exists "Owners delete their project images" on storage.objects;
+create policy "Owners delete their project images"
   on storage.objects for delete to authenticated
   using (
     bucket_id = 'project-images'
     and (storage.foldername(name))[1] = (select auth.uid())::text
     and ((select public.is_project_student()) or (select public.is_project_admin()))
+  );
+
+drop policy if exists "Admins delete any project images" on storage.objects;
+create policy "Admins delete any project images"
+  on storage.objects for delete to authenticated
+  using (
+    bucket_id = 'project-images'
+    and (select public.is_project_admin())
   );
 
 update public.profiles
